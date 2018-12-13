@@ -2,10 +2,17 @@
 
 import React, { Component } from 'react';
 
-import {AppRegistry, StyleSheet, Text, Alert, View, Button
+import {Dimensions, StyleSheet, Text, Alert, View, Button, ScrollView, TouchableOpacity
 } from 'react-native';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
+import * as Animatable from "react-native-animatable";
+import Icons from 'react-native-vector-icons/Ionicons'
+
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const SCREEN_WIDTH = Dimensions.get("window").width;
+
+console.disableYellowBox = true;
 
 export default class App extends Component {
   constructor(props) {
@@ -33,45 +40,88 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.conMain}>
-      <View style={styles.conHeader}>
+      {/* <View style={styles.conHeader}>
           <Text style={styles.textHeader}>Contoh QR Code yang ke 129123x</Text>
-      </View>
+      </View> */}
       <View style={styles.conQR}>
         <QRCodeScanner
         showMarker
+        cameraStyle={{ alignItems: 'center', justifyContent:'center', flex: 1 }}
+        customMarker={
+          <View>
+          <View style={{paddingTop: 20, flexDirection:'row'}}>
+          <TouchableOpacity onPress={() => Alert.alert('Button Pressed!')} style={{flexDirection:'row', paddingLeft: 15}}>
+                  <Icons name="ios-arrow-back" size={25} color="orange"/>
+                  <Text style={styles.centerText}>QR Scanner</Text>
+
+          </TouchableOpacity>
+              </View>
+                <View style={styles.rectangleContainer}>
+                  <View style={styles.topOverlay}>
+                    <Text style={{ fontSize: 12, color: "white" }}>
+                     Scan QR Code here
+                   </Text>
+                  </View>
+
+                <View style={{ flexDirection: "row", alignItems:'center' }}>
+                  {/* <View style={styles.leftAndRightOverlay} /> */}
+
+                   <View style={styles.rectangle} />
+
+                  {/* <View style={styles.leftAndRightOverlay} /> */}
+                  </View>
+
+                  {/* <View style={styles.bottomOverlay} /> */}
+                  </View>
+                  </View>
+        }
          onRead={this.onSuccess.bind(this)}
             ref={(node) => { this.scanner = node }}
-            topContent={
-              <View>
-                <Text style={styles.centerText}>
-                Silakan klik Coba Lagi untuk scan ulang
-                </Text>
-                <Button
-                  onPress={() => {
+        />
+      </View>
+      <View style={{flex: 1, backgroundColor:'white', padding: 15}}>
+                    <Text style={{alignSelf:'center', textAlign: 'center'}}>Pencet tombol 'Coba Lagi' jika ingin menscan kembali</Text>
+                    <Button title={this.state.status}
+                      onPress={() => {
                     this.scanner.reactivate ();
                     this.setState ({status: 'Ready'});
                   }}
-                  title={this.state.status}
-                />
-              </View>
-                  }
-                bottomContent={
-                  <View>
-                    <Text>Code {this.state.dataqr}</Text>
+                    />
+                      <Text style={{fontSize: 12, fontWeight: 'bold'}}>Code</Text>
+                    <ScrollView>
+                      <Text>{this.state.dataqr}</Text>
+                    </ScrollView>
                   </View>
-                    }
-        />
-      </View>
       </View>
     );
   }
 }
+
+const overlayColor = "rgba(0,0,0,0.5)"; // this gives us a black color with a 50% transparency
+
+const rectDimensions = SCREEN_WIDTH * 0.5; // this is equivalent to 255 from a 393 device width
+const rectBorderWidth = SCREEN_WIDTH * 0.005; // this is equivalent to 2 from a 393 device width
+const rectBorderColor = "red";
+
+const scanBarWidth = SCREEN_WIDTH * 0.46; // this is equivalent to 180 from a 393 device width
+const scanBarHeight = SCREEN_WIDTH * 0.0025; //this is equivalent to 1 from a 393 device width
+const scanBarColor = "#22ff00";
+
+
+
 const styles = StyleSheet.create({
+  rectangleContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "transparent"
+  },
   conMain : {
-    flex:1
+    flex:1,
+    height: SCREEN_HEIGHT
   },
   conHeader : {
-    flex:1,
+
     backgroundColor: '#6200EE',
     alignItems: 'center',
     justifyContent: 'center'
@@ -81,11 +131,50 @@ const styles = StyleSheet.create({
     color :'white'
   },
   conQR : {
-    flex:8,
-    padding: 5
+    flex:1,
+    justifyContent: 'flex-start',
+    alignItems: 'center'
   },
   centerText: {
-    fontSize: 12,
-    color: '#777',
+    marginLeft: 15,
+    fontSize: 20,
+    color:'orange'
+  },
+  rectangle: {
+    height: rectDimensions,
+    width: rectDimensions,
+    borderWidth: rectBorderWidth,
+    borderColor: rectBorderColor,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "transparent"
+  },
+
+  topOverlay: {
+    // height: SCREEN_WIDTH,
+    width: SCREEN_WIDTH,
+    // backgroundColor: overlayColor,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+
+  bottomOverlay: {
+    flex: 1,
+    height: SCREEN_WIDTH,
+    width: SCREEN_WIDTH,
+    backgroundColor: overlayColor,
+    paddingBottom: SCREEN_WIDTH * 0.25
+  },
+
+  leftAndRightOverlay: {
+    height: SCREEN_WIDTH * 0.65,
+    width: SCREEN_WIDTH,
+    backgroundColor: overlayColor
+  },
+
+  scanBar: {
+    width: scanBarWidth,
+    height: scanBarHeight,
+    backgroundColor: scanBarColor
   }
 });
