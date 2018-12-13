@@ -18,7 +18,13 @@ export default class App extends Component {
     super(props)
     this.state = {
       dataqr: '',
-      status: 'Ready'
+      status: 'Ready',
+      userData: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: ''
+      }
     };
   }
   onSuccess(e) {
@@ -28,11 +34,17 @@ export default class App extends Component {
       status: 'Coba Lagi'
     })
     if (email !== undefined) {
+      this.setState({userData:{
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: phone
+      }})
       Alert.alert(
       'QR Code',
       'target email : '+email,
       [
-        {text: 'OK', onPress: ()  => console.warn('OK Pressed')},
+        {text: 'OK', onPress: ()  => this.setState({userData:{firstName:''}, dataqr: ''})},
       ],
       { cancelable: false }
     )
@@ -49,6 +61,14 @@ export default class App extends Component {
   }
 
   render() {
+    const {userData} = this.state;
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+    } = userData;
+
     return (
       <View style={styles.conMain}>
       {/* <View style={styles.conHeader}>
@@ -100,7 +120,14 @@ export default class App extends Component {
                     />
                       <Text style={{fontSize: 12, fontWeight: 'bold'}}>Code</Text>
                     <ScrollView>
-                      <Text>{this.state.dataqr}</Text>
+                    {
+                      firstName === '' ? (<Text>{this.state.dataqr}</Text>)
+                      : (<View>
+                        <Text>{firstName}</Text>
+                        <Text>{email}</Text>
+                        <Text>{phone}</Text>
+                      </View>)
+                    }
                     </ScrollView>
                   </View>
       </View>
