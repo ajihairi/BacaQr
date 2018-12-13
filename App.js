@@ -6,7 +6,6 @@ import {Dimensions, StyleSheet, Text, Alert, View, Button, ScrollView, Touchable
 } from 'react-native';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import * as Animatable from "react-native-animatable";
 import Icons from 'react-native-vector-icons/Ionicons'
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -23,18 +22,30 @@ export default class App extends Component {
     };
   }
   onSuccess(e) {
+    const [firstName, lastName, email, phone] = e.data.split(';');  // filtering if there's a dataset object besides, the data will be splitted if found ';'
     this.setState({
       dataqr:this.state.dataqr+', '+e.data,
       status: 'Coba Lagi'
     })
-    Alert.alert(
+    if (email !== undefined) {
+      Alert.alert(
       'QR Code',
-      'Code : '+e.data,
+      'target email : '+email,
       [
         {text: 'OK', onPress: ()  => console.warn('OK Pressed')},
       ],
       { cancelable: false }
     )
+    } else {
+    Alert.alert(
+          'QR Code',
+          'Code : '+e.data,
+          [
+            {text: 'OK', onPress: ()  => console.warn('OK Pressed')},
+          ],
+          { cancelable: false }
+        )
+    }
   }
 
   render() {
@@ -75,7 +86,7 @@ export default class App extends Component {
                   </View>
                   </View>
         }
-         onRead={this.onSuccess.bind(this)}
+        onRead={(e) => this.onSuccess(e)}
             ref={(node) => { this.scanner = node }}
         />
       </View>
